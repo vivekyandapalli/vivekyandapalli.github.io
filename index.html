@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Software Engineer</title>
+  <meta name="description" content="Software engineer building from interface to infrastructure.">
+  <meta name="theme-color" content="#0f1216">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Software Engineer">
+  <meta property="og:description" content="Software engineer building from interface to infrastructure.">
+  <meta property="og:image" content="public/images/og.png"> <!-- TODO: add 1200x630 image -->
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="public/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="src/styles/main.css">
+  <script type="module" src="src/main.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <a id="brand" class="brand" href="#explore">Name</a>
+    <nav aria-label="Primary"><span id="nav-links" class="nav-links"></span></nav>
+    <nav aria-label="Social"><span id="nav-social" class="nav-links social"></span></nav>
+  </header>
+
+  <main id="main">
+    <section id="explore" class="hero" aria-labelledby="hero-name">
+      <div class="hero-copy">
+        <h1 id="hero-name">Name</h1>
+        <p id="hero-title" class="hero-title">Software Engineer</p>
+        <p id="hero-tagline" class="hero-tagline">Building software from interface to infrastructure.</p>
+      </div>
+      <div id="stage" class="stage" aria-hidden="true">
+        <ol id="stage-stack" class="stack"></ol>
+      </div>
+      <a class="scroll-cue" href="#layers">Scroll to explore <span aria-hidden="true">↓</span></a>
+    </section>
+
+    <section id="layers" class="block" aria-labelledby="layers-h">
+      <h2 id="layers-h">The stack</h2>
+      <ul id="layers-list" class="grid"></ul>
+    </section>
+
+    <section id="experience" class="block" aria-labelledby="exp-h">
+      <h2 id="exp-h">Experience</h2>
+      <ul id="experience-list" class="rows"></ul>
+    </section>
+
+    <section id="projects" class="block" aria-labelledby="proj-h">
+      <h2 id="proj-h">Projects</h2>
+      <ul id="projects-list" class="rows"></ul>
+    </section>
+
+    <section id="about" class="block" aria-labelledby="about-h">
+      <h2 id="about-h">About</h2>
+      <div id="about-text" class="prose"></div>
+    </section>
+
+    <section id="resume" class="block" aria-labelledby="resume-h">
+      <h2 id="resume-h">Resume</h2>
+      <div id="resume-links" class="actions"></div>
+    </section>
+  </main>
+
+  <noscript><p class="noscript">This site needs JavaScript to show its content.</p></noscript>
+</body>
+</html>
