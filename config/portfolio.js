@@ -15,7 +15,13 @@ export const portfolio = {
     title: "Vivek Yandapalli — Software Engineer",
     description: "Software engineer building from interface to infrastructure.", // [PLACEHOLDER]
     url: "https://YOUR_USERNAME.github.io/",
+    image: "", // social preview image, e.g. "public/images/og.png" (1200x630)
   },
+
+  // Optional custom 3D model. Leave url empty to use the built-in procedural hardware.
+  // A .glb must contain one top-level node per layer, named exactly: application, platform, infrastructure
+  // (each centred at the origin, ~3.4 x 2.4 units). See README → "Replace the 3D model".
+  model: { url: "" },
 
   personal: {
     name: "Vivek Yandapalli", // inferred from your old site's URL — confirm
@@ -88,12 +94,19 @@ export const portfolio = {
       summary: "[PLACEHOLDER] One-line description.",
       links: { source: "", live: "" },
       technologies: [],
-      architecture: { enabled: false, image: "", description: "" },
+      // Sample diagram. Either set `image` (a path) or list the `flow` of components top to bottom.
+      architecture: {
+        enabled: true,
+        flow: ["Client", "API", "Service", "Database"], // [PLACEHOLDER] replace with your real architecture
+        description: "[PLACEHOLDER] One sentence on how the pieces fit.",
+      },
     },
   ],
 
   skills: [
-    { enabled: true, layer: "application", name: "[PLACEHOLDER] Skill" },
+    { enabled: true, layer: "application", name: "[PLACEHOLDER] App skill" },
+    { enabled: true, layer: "platform", name: "[PLACEHOLDER] Platform skill" },
+    { enabled: true, layer: "infrastructure", name: "[PLACEHOLDER] Infra skill" },
   ],
 
   education: [

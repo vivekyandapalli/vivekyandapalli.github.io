@@ -3,69 +3,102 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Senior Software Engineer</title>
+  <title>Software Engineer</title>
   <meta name="description" content="Software engineer building from interface to infrastructure.">
-  <meta name="theme-color" content="#0f1216">
+  <meta name="theme-color" content="#0b0e12">
+  <link rel="canonical" href="">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Software Engineer">
   <meta property="og:description" content="Software engineer building from interface to infrastructure.">
-  <meta property="og:image" content="public/images/og.png"> <!-- TODO: add 1200x630 image -->
+  <meta property="og:url" content="">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="public/icons/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="src/styles/main.css">
+  <script type="importmap">
+  { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+  </script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script type="module" src="src/main.js"></script>
 </head>
-<body>
+<body id="top">
   <a class="skip" href="#main">Skip to content</a>
 
   <header class="nav">
-    <a id="brand" class="brand" href="#explore">Name</a>
-    <nav aria-label="Primary"><span id="nav-links" class="nav-links"></span></nav>
-    <nav aria-label="Social"><span id="nav-social" class="nav-links social"></span></nav>
+    <a id="brand" class="brand" href="#top" data-nav="explore">Name</a>
+    <nav class="primary" aria-label="Primary"><span id="nav-links" class="nav-links"></span></nav>
+    <div class="nav-right">
+      <span id="nav-social" class="nav-links social"></span>
+      <button id="mode-toggle" class="mode-toggle" type="button" aria-pressed="false">Resume view</button>
+      <details class="menu"><summary>Menu</summary><div id="menu-links" class="menu-links"></div></details>
+    </div>
   </header>
 
   <main id="main">
-    <section id="explore" class="hero" aria-labelledby="hero-name">
-      <div class="hero-copy">
-        <h1 id="hero-name">Name</h1>
-        <p id="hero-title" class="hero-title">Software Engineer</p>
-        <p id="hero-tagline" class="hero-tagline">Building software from interface to infrastructure.</p>
+    <div id="explore-view">
+      <section id="story" class="story" aria-label="Interactive engineering teardown">
+        <div id="pin" class="pin" data-exploded="false">
+          <canvas id="gl" aria-hidden="true"></canvas>
+          <div id="hero-copy" class="hero-copy">
+            <h1 id="hero-name">Name</h1>
+            <p id="hero-title" class="hero-title">Software Engineer</p>
+            <p id="hero-tagline" class="hero-tagline">Building software from interface to infrastructure.</p>
+          </div>
+          <div id="labels" class="overlay"></div>
+          <div id="chips" class="overlay" aria-hidden="true"></div>
+          <div id="caption" class="caption" aria-hidden="true">
+            <p class="kicker"><span id="cap-index"></span> · <span id="cap-title"></span></p>
+            <p id="cap-text"></p>
+            <p class="hint">Select a layer to inspect it</p>
+          </div>
+          <a id="scroll-cue" class="scroll-cue" href="#stack">Scroll to explore <span aria-hidden="true">↓</span></a>
+          <p id="gl-status" class="gl-status" role="status" hidden>Loading 3D scene…</p>
+        </div>
+      </section>
+
+      <div id="after" class="after">
+        <section id="stack" class="block" aria-labelledby="stack-h">
+          <h2 id="stack-h">The stack</h2>
+          <ul id="layers-list" class="grid"></ul>
+        </section>
+        <section id="experience" class="block" aria-labelledby="exp-h">
+          <h2 id="exp-h">Experience</h2>
+          <ul id="experience-list" class="rows"></ul>
+        </section>
+        <section id="projects" class="block" aria-labelledby="proj-h">
+          <h2 id="proj-h">Projects</h2>
+          <ul id="projects-list" class="rows"></ul>
+        </section>
+        <section id="about" class="block" aria-labelledby="about-h">
+          <h2 id="about-h">About</h2>
+          <div id="about-text" class="prose"></div>
+        </section>
+        <section id="contact" class="block" aria-labelledby="contact-h">
+          <h2 id="contact-h">Contact</h2>
+          <div id="contact-links" class="actions"></div>
+        </section>
+        <footer class="foot"><p id="footer-text"></p></footer>
       </div>
-      <div id="stage" class="stage" aria-hidden="true">
-        <ol id="stage-stack" class="stack"></ol>
-      </div>
-      <a class="scroll-cue" href="#layers">Scroll to explore <span aria-hidden="true">↓</span></a>
-    </section>
+    </div>
 
-    <section id="layers" class="block" aria-labelledby="layers-h">
-      <h2 id="layers-h">The stack</h2>
-      <ul id="layers-list" class="grid"></ul>
-    </section>
-
-    <section id="experience" class="block" aria-labelledby="exp-h">
-      <h2 id="exp-h">Experience</h2>
-      <ul id="experience-list" class="rows"></ul>
-    </section>
-
-    <section id="projects" class="block" aria-labelledby="proj-h">
-      <h2 id="proj-h">Projects</h2>
-      <ul id="projects-list" class="rows"></ul>
-    </section>
-
-    <section id="about" class="block" aria-labelledby="about-h">
-      <h2 id="about-h">About</h2>
-      <div id="about-text" class="prose"></div>
-    </section>
-
-    <section id="resume" class="block" aria-labelledby="resume-h">
-      <h2 id="resume-h">Resume</h2>
-      <div id="resume-links" class="actions"></div>
-    </section>
+    <div id="resume-view" hidden></div>
+    <p id="resume-note" class="note" hidden>The 3D view couldn't start on this device, so you're seeing the résumé.</p>
   </main>
 
-  <noscript><p class="noscript">This site needs JavaScript to show its content.</p></noscript>
+  <aside id="inspector" class="inspector" aria-labelledby="insp-title" aria-hidden="true">
+    <div class="insp-head">
+      <div><p id="insp-kicker" class="kicker"></p><h2 id="insp-title" tabindex="-1"></h2></div>
+      <button id="insp-close" class="icon-btn" type="button" aria-label="Close inspector">✕</button>
+    </div>
+    <div id="insp-body" class="insp-body"></div>
+    <nav id="insp-switch" class="insp-switch" aria-label="Switch layer"></nav>
+  </aside>
+
+  <noscript><p class="note">This site needs JavaScript to show its content.</p></noscript>
 </body>
 </html>
