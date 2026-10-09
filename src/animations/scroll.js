@@ -35,7 +35,7 @@ export function initScroll({ story, pin, heroCopy, cue, caption, layers, scene }
     gsap.set(heroCopy, { autoAlpha: h, y: -24 * (1 - h) });
     gsap.set(cue, { autoAlpha: h });
     const idx = p < 0.52 ? -1 : Math.min(n - 1, Math.floor((p - 0.52) / (0.48 / n)));
-    if (idx !== step) { step = idx; scene.setActive(idx); showCaption(idx); }
+    if (idx !== step) { step = idx; scene.setActive(idx); showCaption(idx); if (idx >= 0) scene.playFlow(); }
   }
 
   const st = ScrollTrigger.create({

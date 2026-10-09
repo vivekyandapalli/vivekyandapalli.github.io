@@ -1,11 +1,13 @@
 import { getContent } from "./utils/config.js";
 import { device } from "./utils/device.js";
-import { renderMeta, renderChrome, renderAfter } from "./components/page.js";
+import { renderMeta, renderChrome } from "./components/page.js";
+import { renderSections } from "./components/sections.js";
 import { renderResume } from "./components/resume.js";
 import { createInspector } from "./components/inspector.js";
 import { createOverlay } from "./components/overlay.js";
 import { techFor } from "./components/content.js";
 import { initScroll } from "./animations/scroll.js";
+import { initReveal } from "./animations/reveal.js";
 
 const content = getContent();
 const $ = (s) => document.querySelector(s);
@@ -21,7 +23,7 @@ let inspecting = false;
 renderMeta(content);
 renderChrome(content);
 renderResume($("#resume-view"), content);
-renderAfter(content, { inspect: (key, id) => inspectFrom(key, id) });
+renderSections(content, { inspect: (key, id) => inspectFrom(key, id) });
 
 // ---- inspection ---------------------------------------------------------------------
 function inspect(key, itemId) {
@@ -75,6 +77,7 @@ async function ensureScene() {
       story, pin, heroCopy: $("#hero-copy"), cue: $("#scroll-cue"), caption: $("#caption"),
       layers: content.layers, scene,
     });
+    initReveal();
     // Stop rendering entirely while the teardown is off-screen.
     new IntersectionObserver(([e]) => (e.isIntersecting ? scene.resume() : scene.pause())).observe(story);
 

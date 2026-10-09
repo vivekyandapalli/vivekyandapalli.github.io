@@ -23,6 +23,19 @@ function floorTexture() {
   return new THREE.CanvasTexture(c);
 }
 
+function glowTexture() {
+  const c = document.createElement("canvas");
+  c.width = c.height = 64;
+  const g = c.getContext("2d");
+  const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  grad.addColorStop(0, "rgba(255,255,255,1)");
+  grad.addColorStop(0.3, "rgba(143,227,255,0.45)");
+  grad.addColorStop(1, "rgba(143,227,255,0)");
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 64, 64);
+  return new THREE.CanvasTexture(c);
+}
+
 /**
  * Creates the teardown scene. Renders on demand: the animation loop only runs
  * while something is moving, then goes idle.
@@ -52,14 +65,37 @@ export async function createScene({ canvas, layers, modelUrl }) {
     new THREE.PlaneGeometry(9, 7).rotateX(-Math.PI / 2),
     new THREE.MeshBasicMaterial({ map: floorTexture(), transparent: true, depthWrite: false, toneMapped: false })
   );
+  floor.renderOrder = -1;
   scene.add(floor);
+
+  // Request-flow: a pulse travelling Application -> Platform -> Infrastructure.
+  const flow = { t: 1, active: false };
+  const flowPts = items.map(() => new THREE.Vector3());
+  const pulse = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 12), new THREE.MeshBasicMaterial({ color: 0xe8fbff, toneMapped: false }));
+  pulse.add(new THREE.Sprite(new THREE.SpriteMaterial({
+    map: glowTexture(), color: 0x8fe3ff, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, toneMapped: false,
+  })));
+  pulse.children[0].scale.setScalar(0.75);
+  const trail = [0, 1, 2, 3, 4].map((k) => new THREE.Mesh(
+    new THREE.SphereGeometry(0.05 - k * 0.006, 10, 8),
+    new THREE.MeshBasicMaterial({ color: 0x8fe3ff, transparent: true, opacity: 0.5 - k * 0.09, toneMapped: false, depthWrite: false })
+  ));
+  const flowObjs = [pulse, ...trail];
+  flowObjs.forEach((o) => { o.visible = false; o.renderOrder = 3; scene.add(o); });
+  pulse.children[0].renderOrder = 3;
+  const flowLine = new THREE.Line(
+    new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3)),
+    new THREE.LineBasicMaterial({ color: 0x8fe3ff, transparent: true, opacity: 0, depthWrite: false })
+  );
+  flowLine.frustumCulled = false;
+  scene.add(flowLine);
 
   const pickables = [];
   hw.root.traverse((o) => { if (o.isMesh) pickables.push(o); });
 
   // ---- state -----------------------------------------------------------------
   const input = { progress: 0, activeIdx: -1, focus: null, hover: null, px: 0, py: 0 };
-  const cur = { e: 0, az: -0.72, el: 0.52, dist: 11, ty: 0, sx: 0.17, sy: 0 };
+  const cur = { e: 0.55, az: -1.5, el: 0.8, dist: 1.4 * Math.max(11, 10.4 / (innerWidth / innerHeight)), ty: 0, sx: 0.17, sy: 0 };
   const size = { w: 1, h: 1 };
   const listeners = {};
   let raf = 0, running = true, last = 0;
@@ -92,13 +128,35 @@ export async function createScene({ canvas, layers, modelUrl }) {
 
   function applyLook(it) {
     for (const m of it.mats) {
-      const o = (m.userData.baseOpacity ?? 1) * it.op;
-      const transparent = o < 0.999 || !!m.userData.glass;
-      if (m.transparent !== transparent) { m.transparent = transparent; m.needsUpdate = true; }
-      m.opacity = o;
-      m.depthWrite = it.op > 0.98 && !m.userData.glass;
+      m.opacity = (m.userData.baseOpacity ?? 1) * it.op;
       if (m.userData.accent) m.emissiveIntensity = 0.5 + it.hl * 0.9;
     }
+  }
+
+  const flowGlow = (i) => (flow.active ? Math.max(0, 1 - Math.abs(flow.t * (n - 1) - i) * 1.4) * 0.9 : 0);
+  const along = (t) => {
+    const u = clamp(t, 0, 1) * (n - 1), i = Math.min(n - 2, Math.floor(u)), f = u - i;
+    return flowPts[i].clone().lerp(flowPts[i + 1], f * f * (3 - 2 * f));
+  };
+  /** Updates the dependency line and pulse; returns true while the pulse is travelling. */
+  function updateFlow(dt) {
+    if (n < 2) return false;
+    hw.root.updateMatrixWorld(true);
+    const attr = flowLine.geometry.attributes.position;
+    items.forEach((it, i) => {
+      flowPts[i].set(...it.flow);
+      it.group.localToWorld(flowPts[i]);
+      attr.setXYZ(i, flowPts[i].x, flowPts[i].y, flowPts[i].z);
+    });
+    attr.needsUpdate = true;
+    flowLine.material.opacity = input.focus ? 0 : 0.3 * smooth(0.6, 1, cur.e);
+    if (!flow.active) return false;
+    flow.t += dt / 2.4;
+    if (flow.t >= 1) { flow.active = false; flowObjs.forEach((o) => { o.visible = false; }); return false; }
+    pulse.position.copy(along(flow.t));
+    trail.forEach((tr, k) => tr.position.copy(along(flow.t - (k + 1) * 0.035)));
+    flowObjs.forEach((o) => { o.visible = true; });
+    return true;
   }
 
   /** Advances all damped values; returns true while anything is still moving. */
@@ -114,15 +172,16 @@ export async function createScene({ canvas, layers, modelUrl }) {
     const spacing = lerp(0.55, 1.9, cur.e);
     items.forEach((it, i) => {
       it.group.position.y = ((n - 1) / 2 - i) * spacing;
-      for (const pt of it.parts) pt.mesh.position.y = pt.base + pt.dy * cur.e;
+      for (const pt of it.parts) pt.mesh.position.y = pt.base + pt.dy * smooth(pt.st ?? 0, (pt.st ?? 0) + 0.6, cur.e);
       const opT = input.focus && input.focus !== it.key ? 0.1 : 1;
       const hlT = (input.hover === it.key ? 1 : 0) + (input.focus === it.key ? 0.5 : 0)
-        + (!input.focus && input.activeIdx === i && cur.e > 0.6 ? 0.5 : 0);
+        + (!input.focus && input.activeIdx === i && cur.e > 0.6 ? 0.5 : 0) + flowGlow(i);
       if (Math.abs(opT - it.op) > 0.002 || Math.abs(hlT - it.hl) > 0.002) moving = true;
       it.op += (opT - it.op) * k;
       it.hl += (hlT - it.hl) * k;
       applyLook(it);
     });
+    if (updateFlow(dt)) moving = true;
     floor.position.y = items[n - 1].group.position.y - 0.42;
 
     const lit = input.focus ?? (input.activeIdx >= 0 && cur.e > 0.6 ? items[input.activeIdx].key : null);
@@ -204,6 +263,8 @@ export async function createScene({ canvas, layers, modelUrl }) {
     setHover(k) { if (k !== input.hover) { input.hover = k; request(); } },
     on(name, fn) { listeners[name] = fn; },
     requestRender: request,
+    /** Sends a pulse down through the layers (skipped for reduced motion). */
+    playFlow() { if (n < 2 || device.reducedMotion) return; flow.t = 0; flow.active = true; request(); },
     /** Projects a point (in a layer's local space) to canvas pixels. */
     project(layerKey, [x, y, z]) {
       const it = items.find((i) => i.key === layerKey);

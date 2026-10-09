@@ -15,7 +15,7 @@
   <link rel="icon" href="public/icons/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="src/styles/main.css">
   <script type="importmap">
   { "imports": {
@@ -62,27 +62,61 @@
       </section>
 
       <div id="after" class="after">
-        <section id="stack" class="block" aria-labelledby="stack-h">
-          <h2 id="stack-h">The stack</h2>
-          <ul id="layers-list" class="grid"></ul>
+        <section id="stack" class="sec" aria-labelledby="stack-h">
+          <header class="sec-head" data-reveal="1">
+            <p class="eyebrow"><span class="num"></span>The stack</p>
+            <h2 id="stack-h">Every layer, one engineer.</h2>
+            <p class="sec-sub">From the interface people touch to the infrastructure it runs on. Pick a layer to inspect it in the 3D teardown.</p>
+          </header>
+          <ol id="layers-list" class="bands"></ol>
         </section>
-        <section id="experience" class="block" aria-labelledby="exp-h">
-          <h2 id="exp-h">Experience</h2>
-          <ul id="experience-list" class="rows"></ul>
+
+        <section id="experience" class="sec" aria-labelledby="exp-h">
+          <header class="sec-head" data-reveal="1">
+            <p class="eyebrow"><span class="num"></span>Experience</p>
+            <h2 id="exp-h">A build log.</h2>
+            <p class="sec-sub">Each role is tagged with the layer of the stack it lived in.</p>
+          </header>
+          <div id="experience-filter" class="filter"></div>
+          <div class="timeline-wrap">
+            <div class="tl-track" aria-hidden="true"><span id="tl-progress" class="tl-progress"></span></div>
+            <ol id="experience-list" class="timeline"></ol>
+          </div>
         </section>
-        <section id="projects" class="block" aria-labelledby="proj-h">
-          <h2 id="proj-h">Projects</h2>
-          <ul id="projects-list" class="rows"></ul>
+
+        <section id="projects" class="sec" aria-labelledby="proj-h">
+          <header class="sec-head" data-reveal="1">
+            <p class="eyebrow"><span class="num"></span>Projects</p>
+            <h2 id="proj-h">Selected work.</h2>
+            <p class="sec-sub">Open the architecture on any project to see how it fits together.</p>
+          </header>
+          <div id="projects-filter" class="filter"></div>
+          <ul id="projects-list" class="proj-grid"></ul>
         </section>
-        <section id="about" class="block" aria-labelledby="about-h">
-          <h2 id="about-h">About</h2>
-          <div id="about-text" class="prose"></div>
+
+        <section id="about" class="sec" aria-labelledby="about-h">
+          <header class="sec-head" data-reveal="1">
+            <p class="eyebrow"><span class="num"></span>About</p>
+            <h2 id="about-h">The engineer behind it.</h2>
+          </header>
+          <div class="about-grid">
+            <div id="about-text" class="statement" data-reveal="1"></div>
+            <aside id="spec-sheet" class="spec" data-reveal="1" aria-label="Spec sheet"></aside>
+          </div>
         </section>
-        <section id="contact" class="block" aria-labelledby="contact-h">
-          <h2 id="contact-h">Contact</h2>
-          <div id="contact-links" class="actions"></div>
+
+        <section id="contact" class="sec contact" aria-labelledby="contact-h">
+          <header class="sec-head wide" data-reveal="1">
+            <p class="eyebrow"><span class="num"></span>Contact</p>
+            <h2 id="contact-h" class="cta-title">Let's build something <em>end to end.</em></h2>
+          </header>
+          <div id="contact-body" data-reveal="1"></div>
         </section>
-        <footer class="foot"><p id="footer-text"></p></footer>
+
+        <footer class="foot">
+          <p id="footer-text"></p>
+          <p class="foot-links"><a href="#top" data-nav="explore">Back to top ↑</a><a href="#resume" data-nav="resume">Résumé view</a></p>
+        </footer>
       </div>
     </div>
 

@@ -25,6 +25,7 @@ Everything personal lives there. `[PLACEHOLDER]` text is sample content to repla
 | Add experience | Copy a block in `experience`; use `achievements: [{ text, metric }]` |
 | Add a diagram | Project `architecture`: `{ enabled: true, image: "public/images/x.png" }` or `flow: ["A","B","C"]` |
 | Resume PDF | Put it at `public/resume.pdf`, set `links.resume.enabled = true` |
+| Show an availability line | `personal.availability = { enabled: true, text: "Open to new opportunities" }` |
 | Social preview | Add `public/images/og.png` (1200×630), set `site.image` |
 
 Also update `<title>` and the meta description in `index.html`; crawlers that don't run JavaScript read those.
