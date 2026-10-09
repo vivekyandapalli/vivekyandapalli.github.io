@@ -21,7 +21,11 @@ export function initScroll({ story, pin, heroCopy, cue, caption, layers, scene }
   let step = -2;
 
   function showCaption(idx) {
-    if (idx < 0) { gsap.to(caption, { autoAlpha: 0, duration: device.reducedMotion ? 0 : 0.25 }); return; }
+    gsap.killTweensOf(caption);
+    if (idx < 0) {
+      gsap.set(caption, { autoAlpha: 0, y: 0 });
+      return;
+    }
     els.index.textContent = String(idx + 1).padStart(2, "0");
     els.title.textContent = layers[idx].title;
     els.text.textContent = layers[idx].summary;
@@ -41,6 +45,8 @@ export function initScroll({ story, pin, heroCopy, cue, caption, layers, scene }
   const st = ScrollTrigger.create({
     trigger: story, start: "top top", end: "bottom bottom",
     onUpdate: (self) => apply(self.progress),
+    onRefresh: (self) => apply(self.progress),
+    onLeaveBack: () => apply(0),
   });
   apply(st.progress);
   return st;
